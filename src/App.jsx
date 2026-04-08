@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import localforage from 'localforage';
 import { Dumbbell, CheckCircle2, Circle, Coffee, Calendar, ChevronRight, Activity, Plus, Trash2, X, Upload, Image as ImageIcon } from 'lucide-react';
 
 // Generador de IDs únicos simple
@@ -37,32 +38,13 @@ const ExerciseCard = ({ exercise, onUpdate, onToggleComplete, onDelete }) => {
       return;
     }
     const reader = new FileReader();
-    reader.onloadend = async () => {
-      try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: reader.result })
-        });
-        const data = await res.json();
-        if (data.url) {
-          // Delete old if exists
-          if (exercise.imagen && exercise.imagen.startsWith('/uploads/')) {
-            await fetch('/api/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ delete: exercise.imagen }) });
-          }
-          onUpdate(exercise.id, 'imagen', data.url);
-        }
-      } catch (err) {
-        console.error(err);
-      }
+    reader.onloadend = () => {
+      onUpdate(exercise.id, 'imagen', reader.result);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleCardImageDelete = async () => {
-    if (exercise.imagen && exercise.imagen.startsWith('/uploads/')) {
-      await fetch('/api/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ delete: exercise.imagen }) });
-    }
+  const handleCardImageDelete = () => {
     onUpdate(exercise.id, 'imagen', '');
   };
 
@@ -184,27 +166,35 @@ export default function App() {
   const [newExercise, setNewExercise] = useState({ nombre: '', series: '3', reps: '10', imagen: '' });
   const [imagePreview, setImagePreview] = useState('');
 
-  // Cargar datos de localStorage al inicio
+  // Cargar datos de localforage al inicio
   useEffect(() => {
-    // Usamos una nueva key para forzar la carga de la rutina desde ceros
-    const savedRoutine = localStorage.getItem('fitRoutineDataV3');
-    if (savedRoutine) {
-      setRoutine(JSON.parse(savedRoutine));
-    } else {
-      setRoutine(emptyRoutine);
-    }
+    const loadRoutine = async () => {
+      try {
+        const savedRoutine = await localforage.getItem('fitRoutineDataV3');
+        if (savedRoutine) {
+          setRoutine(savedRoutine);
+        } else {
+          setRoutine(emptyRoutine);
+        }
+      } catch (e) {
+        console.error("Error cargando rutina:", e);
+        setRoutine(emptyRoutine);
+      }
 
-    // Auto-seleccionar el día actual de la semana
-    const daysMap = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
-    const today = new Date().getDay();
-    setActiveDay(daysMap[today]);
-    setIsLoaded(true);
+      // Auto-seleccionar el día actual de la semana
+      const daysMap = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+      const today = new Date().getDay();
+      setActiveDay(daysMap[today]);
+      setIsLoaded(true);
+    };
+    
+    loadRoutine();
   }, []);
 
-  // Guardar en localStorage cada vez que cambia la rutina
+  // Guardar en localforage cada vez que cambia la rutina
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('fitRoutineDataV3', JSON.stringify(routine));
+      localforage.setItem('fitRoutineDataV3', routine).catch(err => console.error("Error guardando datos", err));
     }
   }, [routine, isLoaded]);
 
@@ -247,31 +237,14 @@ export default function App() {
     }
 
     const reader = new FileReader();
-    reader.onloadend = async () => {
+    reader.onloadend = () => {
+      setNewExercise(prev => ({ ...prev, imagen: reader.result }));
       setImagePreview(reader.result);
-
-      try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: reader.result })
-        });
-        const data = await res.json();
-        if (data.url) {
-          setNewExercise(prev => ({ ...prev, imagen: data.url }));
-          setImagePreview(data.url);
-        }
-      } catch (err) {
-        console.error("Error al subir imagen", err);
-      }
     };
     reader.readAsDataURL(file);
   };
 
-  const handleClearImage = async () => {
-    if (newExercise.imagen && newExercise.imagen.startsWith('/uploads/')) {
-      await fetch('/api/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ delete: newExercise.imagen }) });
-    }
+  const handleClearImage = () => {
     setNewExercise({ ...newExercise, imagen: '' });
     setImagePreview('');
     // Limpiar el campo del archivo para permitir seleccionar la misma imagen de nuevo
