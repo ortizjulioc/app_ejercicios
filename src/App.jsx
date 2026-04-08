@@ -4,45 +4,16 @@ import { Dumbbell, CheckCircle2, Circle, Coffee, Calendar, ChevronRight, Activit
 // Generador de IDs únicos simple
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
-// Datos iniciales basados en el JSON proporcionado, ahora con imágenes
-// const defaultRoutine = {
-//   lunes: [
-//     { id: generateId(), nombre: "Dominadas", series: 3, reps: "al fallo", completado: false, imagen: "https://images.unsplash.com/photo-1598971639058-fab3c3109a00?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Remo con barra", series: 4, reps: "10-12", completado: false, imagen: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Remo a una mano con mancuerna", series: 3, reps: "12 por brazo", completado: false, imagen: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Curl de bíceps con barra", series: 3, reps: "12", completado: false, imagen: "https://images.unsplash.com/photo-1581009137042-c552e485697a?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Curl martillo con mancuernas", series: 3, reps: "12", completado: false, imagen: "https://images.unsplash.com/photo-1584466977773-e625c37cdd50?auto=format&fit=crop&w=500&h=300&q=80" }
-//   ],
-//   martes: [
-//     { id: generateId(), nombre: "Press de banca", series: 4, reps: "10", completado: false, imagen: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Press militar", series: 4, reps: "10", completado: false, imagen: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Flexiones", series: 3, reps: "al fallo", completado: false, imagen: "https://images.unsplash.com/photo-1598971639058-fab3c3109a00?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Vuelos laterales", series: 3, reps: "15", completado: false, imagen: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Copa de tríceps", series: 3, reps: "12", completado: false, imagen: "https://images.unsplash.com/photo-1530822847156-5df684ec5ee1?auto=format&fit=crop&w=500&h=300&q=80" }
-//   ],
-//   miercoles: [
-//     { id: generateId(), nombre: "Sentadilla", series: 4, reps: "12", completado: false, imagen: "https://images.unsplash.com/photo-1566241440091-ec10de8db2e1?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Zancadas", series: 3, reps: "10 por pierna", completado: false, imagen: "https://images.unsplash.com/photo-1434682881908-b43d0467b798?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Peso muerto rumano", series: 4, reps: "12", completado: false, imagen: "https://images.unsplash.com/photo-1603287681836-b174ce5074c2?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Elevación de talones", series: 4, reps: "20", completado: false, imagen: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Plancha", series: 3, reps: "45-60 seg", completado: false, imagen: "https://images.unsplash.com/photo-1566241477600-ac0244c701d8?auto=format&fit=crop&w=500&h=300&q=80" }
-//   ],
-//   jueves: [], // Descanso
-//   viernes: [
-//     { id: generateId(), nombre: "Dominadas supinas", series: 3, reps: "al fallo", completado: false, imagen: "https://images.unsplash.com/photo-1598971639058-fab3c3109a00?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Press inclinado o flexiones diamante", series: 3, reps: "al fallo", completado: false, imagen: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Remo al mentón", series: 3, reps: "12", completado: false, imagen: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Fondos en silla", series: 3, reps: "al fallo", completado: false, imagen: "https://images.unsplash.com/photo-1530822847156-5df684ec5ee1?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Elevación de piernas colgado", series: 3, reps: "10-12", completado: false, imagen: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=500&h=300&q=80" }
-//   ],
-//   sabado: [
-//     { id: generateId(), nombre: "Sentadilla sumo", series: 3, reps: "15", completado: false, imagen: "https://images.unsplash.com/photo-1566241440091-ec10de8db2e1?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Step-ups", series: 3, reps: "10 por pierna", completado: false, imagen: "https://images.unsplash.com/photo-1434682881908-b43d0467b798?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Curl concentrado", series: 3, reps: "12", completado: false, imagen: "https://images.unsplash.com/photo-1581009137042-c552e485697a?auto=format&fit=crop&w=500&h=300&q=80" },
-//     { id: generateId(), nombre: "Press francés", series: 3, reps: "12", completado: false, imagen: "https://images.unsplash.com/photo-1530822847156-5df684ec5ee1?auto=format&fit=crop&w=500&h=300&q=80" }
-//   ],
-//   domingo: [] // Descanso
-// };
+// Datos iniciales vacíos para agregar rutinas manualmente
+const emptyRoutine = {
+  lunes: [],
+  martes: [],
+  miercoles: [],
+  jueves: [],
+  viernes: [],
+  sabado: [],
+  domingo: []
+};
 
 const diasSemana = [
   { key: 'lunes', label: 'Lunes', focus: 'Tracción' },
@@ -215,12 +186,12 @@ export default function App() {
 
   // Cargar datos de localStorage al inicio
   useEffect(() => {
-    // Usamos una nueva key para forzar la carga de la rutina con imágenes
-    const savedRoutine = localStorage.getItem('fitRoutineDataV2');
+    // Usamos una nueva key para forzar la carga de la rutina desde ceros
+    const savedRoutine = localStorage.getItem('fitRoutineDataV3');
     if (savedRoutine) {
       setRoutine(JSON.parse(savedRoutine));
     } else {
-      setRoutine(defaultRoutine);
+      setRoutine(emptyRoutine);
     }
 
     // Auto-seleccionar el día actual de la semana
@@ -233,7 +204,7 @@ export default function App() {
   // Guardar en localStorage cada vez que cambia la rutina
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('fitRoutineDataV2', JSON.stringify(routine));
+      localStorage.setItem('fitRoutineDataV3', JSON.stringify(routine));
     }
   }, [routine, isLoaded]);
 
